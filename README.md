@@ -1,4 +1,4 @@
-# Bilgisayar Bilgileri
+﻿# Bilgisayar Bilgileri
 
 A modern computer components e-commerce web application developed with HTML, CSS, JavaScript, Node.js, Express and PostgreSQL.
 
@@ -102,9 +102,9 @@ The project follows a client-server architecture:
 
 ```text
 Browser (HTML / CSS / JavaScript)
-              ↓
+              â†“
        Node.js + Express
-              ↓
+              â†“
           PostgreSQL
 ```
 
@@ -122,26 +122,26 @@ This architecture improves:
 
 ```text
 Bilgisayar-Bilgileri/
-│
-├── OKUL/
-│   ├── anasayfa.html
-│   ├── hakkimizda.html
-│   ├── ürünler.html
-│   ├── markalar.html
-│   ├── iletişim.html
-│   ├── sepet.html
-│   ├── satinalma.html
-│   ├── hesap.html
-│   ├── admin.html
-│   ├── siparis-takip.html
-│   └── CSS, JavaScript and image files
-│
-├── server.js
-├── package.json
-├── package-lock.json
-├── .gitignore
-├── STOK_KURULUM.txt
-└── README.md
+â”‚
+â”œâ”€â”€ OKUL/
+â”‚   â”œâ”€â”€ anasayfa.html
+â”‚   â”œâ”€â”€ hakkimizda.html
+â”‚   â”œâ”€â”€ Ã¼rÃ¼nler.html
+â”‚   â”œâ”€â”€ markalar.html
+â”‚   â”œâ”€â”€ iletiÅŸim.html
+â”‚   â”œâ”€â”€ sepet.html
+â”‚   â”œâ”€â”€ satinalma.html
+â”‚   â”œâ”€â”€ hesap.html
+â”‚   â”œâ”€â”€ admin.html
+â”‚   â”œâ”€â”€ siparis-takip.html
+â”‚   â””â”€â”€ CSS, JavaScript and image files
+â”‚
+â”œâ”€â”€ server.js
+â”œâ”€â”€ package.json
+â”œâ”€â”€ package-lock.json
+â”œâ”€â”€ .gitignore
+â”œâ”€â”€ STOK_KURULUM.txt
+â””â”€â”€ README.md
 ```
 
 ---
@@ -154,35 +154,35 @@ Bilgisayar-Bilgileri/
 
 ## About Page
 
-![About Page](DOCUMENTS/02-hakkimizda%20(1).png)
+![About Page](DOCUMENTS/02-hakkimizda.png)
 
 ## Products Page
 
-![Products Page and Add-to-Cart Notification](DOCUMENTS/03-urunler-sepete-ekleme%20(1).png)
+![Products Page and Add-to-Cart Notification](DOCUMENTS/03-urunler-sepete-ekleme.png)
 
 ## Brands Page
 
-![Brands Page](DOCUMENTS/04-markalar%20(1).png)
+![Brands Page](DOCUMENTS/04-markalar.png)
 
 ## Contact Page
 
-![Contact Page](DOCUMENTS/05-iletisim%20(1).png)
+![Contact Page](DOCUMENTS/05-iletisim.png)
 
 ## Shopping Cart
 
-![Shopping Cart](DOCUMENTS/06-sepet%20(1).png)
+![Shopping Cart](DOCUMENTS/06-sepet.png)
 
 ## User Account Page
 
-![User Account Login Page](DOCUMENTS/07-hesap-giris%20(1).png)
+![User Account Login Page](DOCUMENTS/07-hesap-giris.png)
 
-## Admin Panel — Product Management
+## Admin Panel â€” Product Management
 
-![Admin Product Management](DOCUMENTS/08-admin-urunler%20(1).png)
+![Admin Product Management](DOCUMENTS/08-admin-urunler.png)
 
-## Admin Panel — Order Management
+## Admin Panel â€” Order Management
 
-![Admin Order Management](DOCUMENTS/09-admin-siparisler%20(1).png)
+![Admin Order Management](DOCUMENTS/09-admin-siparisler.png)
 
 ---
 
@@ -270,3 +270,4 @@ Web Development | Node.js | Express | PostgreSQL
 # License
 
 If the repository does not include a `LICENSE` file, no open-source license has been specified. Add an appropriate license if you intend to define reuse and redistribution permissions.
+
