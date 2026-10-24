@@ -102,9 +102,9 @@ The project follows a client-server architecture:
 
 ```text
 Browser (HTML / CSS / JavaScript)
-              Ôåô
+              ↔
        Node.js + Express
-              Ôåô
+              ↔
           PostgreSQL
 ```
 
@@ -120,29 +120,25 @@ This architecture improves:
 
 # Project Structure
 
-```text
 Bilgisayar-Bilgileri/
-Ôöé
-Ôö£ÔöÇÔöÇ OKUL/
-Ôöé   Ôö£ÔöÇÔöÇ anasayfa.html
-Ôöé   Ôö£ÔöÇÔöÇ hakkimizda.html
-Ôöé   Ôö£ÔöÇÔöÇ ├╝r├╝nler.html
-Ôöé   Ôö£ÔöÇÔöÇ markalar.html
-Ôöé   Ôö£ÔöÇÔöÇ ileti┼şim.html
-Ôöé   Ôö£ÔöÇÔöÇ sepet.html
-Ôöé   Ôö£ÔöÇÔöÇ satinalma.html
-Ôöé   Ôö£ÔöÇÔöÇ hesap.html
-Ôöé   Ôö£ÔöÇÔöÇ admin.html
-Ôöé   Ôö£ÔöÇÔöÇ siparis-takip.html
-Ôöé   ÔööÔöÇÔöÇ CSS, JavaScript and image files
-Ôöé
-Ôö£ÔöÇÔöÇ server.js
-Ôö£ÔöÇÔöÇ package.json
-Ôö£ÔöÇÔöÇ package-lock.json
-Ôö£ÔöÇÔöÇ .gitignore
-Ôö£ÔöÇÔöÇ STOK_KURULUM.txt
-ÔööÔöÇÔöÇ README.md
-```
+├── OKUL/
+│   ├── anasayfa.html
+│   ├── hakkimizda.html
+│   ├── ürünler.html
+│   ├── markalar.html
+│   ├── iletişim.html
+│   ├── sepet.html
+│   ├── satinalma.html
+│   ├── hesap.html
+│   ├── admin.html
+│   ├── siparis-takip.html
+│   └── CSS, JavaScript and image files
+├── server.js
+├── package.json
+├── package-lock.json
+├── .gitignore
+├── STOK_KURULUM.txt
+└── README.md
 
 ---
 
@@ -176,11 +172,11 @@ Bilgisayar-Bilgileri/
 
 ![User Account Login Page](DOCUMENTS/07-hesap-giris.png)
 
-## Admin Panel ÔÇö Product Management
+## Admin Panel — Product Management
 
 ![Admin Product Management](DOCUMENTS/08-admin-urunler.png)
 
-## Admin Panel ÔÇö Order Management
+## Admin Panel — Order Management
 
 ![Admin Order Management](DOCUMENTS/09-admin-siparisler.png)
 
