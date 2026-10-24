@@ -1,125 +1,86 @@
 ﻿# Bilgisayar Bilgileri
 
-A modern computer components e-commerce web application developed with HTML, CSS, JavaScript, Node.js, Express and PostgreSQL.
+A full-stack computer components e-commerce web application built with HTML, CSS, JavaScript, Node.js, Express, and PostgreSQL.
 
-The project allows users to browse computer hardware products and brands, manage their shopping carts and experience a test checkout flow, while providing administrators with a dedicated management panel to manage products, stock levels and customer orders.
+The project allows users to browse computer hardware products and brands, manage their shopping carts, and complete a test checkout flow. It also includes an administration panel for managing products, stock levels, and customer orders.
 
----
-
-# Project Overview
-
-Bilgisayar Bilgileri is a full-stack e-commerce web application designed to present computer components, laptops and gaming peripherals through a user-friendly online shopping experience.
-
-The application includes:
-
-* Public e-commerce website
-* Product and brand catalog
-* Shopping cart and checkout flow
-* Admin management panel
-* Product and stock management
-* Order management and tracking
-* PostgreSQL database integration
+> **Note:** The checkout flow is for testing purposes only and does not process real payments. Additional security review and testing are required before production use.
 
 ---
 
-# Features
+## Project Overview
 
-## Admin Panel
+Bilgisayar Bilgileri is an e-commerce web application designed to provide a user-friendly shopping experience for computer components, laptops, and gaming peripherals.
 
-* Manage products with create, read, update and delete operations
-* Manage product stock levels
-* View customer orders and order details
-* Search and filter orders by status and date
-* Update order statuses
-* Export order lists to CSV
-* View product, order and test payment statistics
-* Admin login and logout functionality
+### Main Features
 
-## E-commerce Website
-
-* Browse computer components and peripherals
-* View products and brands
-* Explore the homepage and company information
-* Add products to the shopping cart
-* Remove items from the cart
-* Review the cart before checkout
-* Submit customer information through the order form
-* Access the test checkout and order tracking flow
-* User-friendly website interface
-
-## Backend & Security
-
-* REST-style API endpoints using Express
-* PostgreSQL database integration
-* Server-side product price and stock validation
-* Transaction-based order creation and stock updates
-* Environment variable configuration with dotenv
-* Admin session token generation and verification
-* Order tracking code generation and hash storage
-* Basic server health check endpoint
-
-> **Note:** The checkout flow is for testing purposes and does not process real payments. Additional security review and testing are required before production use.
+- Product and brand catalog
+- Shopping cart management
+- Test checkout and order tracking
+- Product and stock management
+- Customer order management
+- Order filtering and status updates
+- CSV export for order lists
+- PostgreSQL database integration
+- Administrative login and management panel
 
 ---
 
-# Technologies Used
+## Technologies Used
 
-## Backend
+### Backend
 
-* Node.js
-* Express.js
-* PostgreSQL
-* node-postgres (`pg`)
-* dotenv
-* REST-style API endpoints
-* SQL queries and database transactions
-* CRUD Operations
+- Node.js
+- Express.js
+- PostgreSQL
+- `pg` (node-postgres)
+- `dotenv`
+- REST-style API endpoints
 
-## Frontend
+### Frontend
 
-* HTML5
-* CSS3
-* JavaScript
-* Fetch API
-* Browser Local Storage
-* Browser Session Storage
+- HTML5
+- CSS3
+- JavaScript
+- Fetch API
+- Browser Local Storage
+- Browser Session Storage
 
-## Security & Architecture
+### Security and Data Management
 
-* Environment Variable Configuration
-* Admin Session Verification
-* Server-Side Input Validation
-* Parameterized SQL Queries
-* Order Tracking Code Hashing
-* Static File Serving
-* Separation of Frontend and Backend Responsibilities
+- Server-side product price and stock validation
+- Parameterized SQL queries
+- Database transactions for order creation and stock updates
+- Environment variable configuration
+- Administrative session verification
+- Order tracking code generation and hash storage
 
 ---
 
-# Architecture
+## Architecture
 
-The project follows a client-server architecture:
+The application follows a client-server architecture.
 
 ```text
-Browser (HTML / CSS / JavaScript)
-              ↔
-       Node.js + Express
-              ↔
-          PostgreSQL
+Browser
+  |
+  v
+HTML / CSS / JavaScript
+  |
+  v
+Node.js + Express
+  |
+  v
+PostgreSQL
 ```
 
-This architecture improves:
-
-* maintainability
-* modularity
-* separation of concerns
-* data consistency
-* organization of frontend and backend responsibilities
+The frontend communicates with the Express server through API endpoints. The server handles application logic and database operations.
 
 ---
 
-# Project Structure
+## Project Structure
 
+```text
 Bilgisayar-Bilgileri/
 ├── OKUL/
 │   ├── anasayfa.html
@@ -139,67 +100,83 @@ Bilgisayar-Bilgileri/
 ├── .gitignore
 ├── STOK_KURULUM.txt
 └── README.md
+```
+
+- `OKUL/` — Website pages, stylesheets, scripts, and frontend assets.
+- `server.js` — Express server and API endpoints.
+- `package.json` — Project metadata, dependencies, and scripts.
+- `package-lock.json` — Locked dependency versions.
+- `.gitignore` — Files and directories excluded from Git.
+- `STOK_KURULUM.txt` — Database and installation instructions.
 
 ---
 
-# Screenshots
+## Screenshots
 
-## Home Page
+### Home Page
 
 ![Home Page](DOCUMENTS/01-anasayfa.png)
 
-## About Page
+### About Page
 
 ![About Page](DOCUMENTS/02-hakkimizda.png)
 
-## Products Page
+### Products Page
 
 ![Products Page and Add-to-Cart Notification](DOCUMENTS/03-urunler-sepete-ekleme.png)
 
-## Brands Page
+### Brands Page
 
 ![Brands Page](DOCUMENTS/04-markalar.png)
 
-## Contact Page
+### Contact Page
 
 ![Contact Page](DOCUMENTS/05-iletisim.png)
 
-## Shopping Cart
+### Shopping Cart
 
 ![Shopping Cart](DOCUMENTS/06-sepet.png)
 
-## User Account Page
+### User Account Page
 
 ![User Account Login Page](DOCUMENTS/07-hesap-giris.png)
 
-## Admin Panel — Product Management
+### Admin Panel — Product Management
 
 ![Admin Product Management](DOCUMENTS/08-admin-urunler.png)
 
-## Admin Panel — Order Management
+### Admin Panel — Order Management
 
 ![Admin Order Management](DOCUMENTS/09-admin-siparisler.png)
 
 ---
 
-# Getting Started
+## Getting Started
 
-## Clone the repository
+### Prerequisites
+
+Make sure the following are installed:
+
+- Node.js and npm
+- PostgreSQL
+- Git
+
+### 1. Clone the Repository
 
 ```bash
 git clone https://github.com/toygarkeskin/Bilgisayar-Bilgileri.git
 cd Bilgisayar-Bilgileri
 ```
 
-## Install dependencies
+### 2. Install Dependencies
 
 ```bash
 npm install
 ```
 
-## Configure the environment
+### 3. Configure Environment Variables
 
-Create a `.env` file in the project root and configure the following variables for your local environment:
+Create a `.env` file in the project root and configure it for your local environment.
 
 ```dotenv
 PORT=3000
@@ -214,9 +191,13 @@ ADMIN_PASSWORD=your_admin_password
 SESSION_SECRET=your_long_random_session_secret
 ```
 
-Configure PostgreSQL and prepare the required database tables according to the project's `STOK_KURULUM.txt` instructions. Do not commit real passwords or secret keys to the repository.
+Replace the example values with your local configuration. Never commit real passwords, database credentials, or session secrets to the repository.
 
-## Run the project
+### 4. Configure the Database
+
+Create and configure the PostgreSQL database and required tables according to the instructions in `STOK_KURULUM.txt`.
+
+### 5. Start the Application
 
 ```bash
 npm start
@@ -228,42 +209,53 @@ Open the application in your browser:
 http://localhost:3000
 ```
 
-## Check the server
+### 6. Check the Server
+
+To check the JavaScript syntax of the server file, run:
 
 ```bash
 npm run check
 ```
 
-The command checks the JavaScript syntax of `server.js`. It does not test every feature or confirm that the database connection is working.
+This command checks the syntax of `server.js`; it does not test every application feature or guarantee that the database connection is working.
 
 ---
 
-# Learning Outcomes
+## Security Notes
 
-Throughout this project, I practiced and developed my knowledge in:
-
-* Full-stack web application development
-* HTML, CSS and JavaScript
-* Node.js and Express application development
-* REST-style API design
-* PostgreSQL database integration
-* CRUD operations and SQL queries
-* Shopping cart and checkout workflows
-* Product and stock management
-* Order processing and tracking
-* Git and GitHub version control
+- Keep the `.env` file out of version control.
+- Use strong, unique administrative credentials.
+- Do not use real customer payment information with the test checkout.
+- Review authentication, session handling, HTTPS, error handling, database backups, and stock recovery before any production deployment.
+- Test database connectivity and application behavior in your local environment.
 
 ---
 
-# Developer
+## Learning Outcomes
 
-Toygar Keskin
+This project provided practical experience with:
+
+- Full-stack web application development
+- HTML, CSS, and JavaScript
+- Node.js and Express
+- REST-style API design
+- PostgreSQL integration and SQL queries
+- CRUD operations
+- Shopping cart and checkout workflows
+- Product and inventory management
+- Order processing and tracking
+- Git and GitHub version control
+
+---
+
+## Developer
+
+**Toygar Keskin**
 
 Web Development | Node.js | Express | PostgreSQL
 
 ---
 
-# License
+## License
 
-If the repository does not include a `LICENSE` file, no open-source license has been specified. Add an appropriate license if you intend to define reuse and redistribution permissions.
-
+No open-source license is specified unless a `LICENSE` file is included in the repository. Reuse and redistribution are therefore subject to applicable rights and permissions.
