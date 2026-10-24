@@ -1,0 +1,166 @@
+body {
+
+    margin: 0;
+
+    background-image: url("anasyafresim/bg.png");
+
+    background-size: cover;
+
+    background-position: center;
+
+    font-family: Arial;
+
+}
+
+
+.login-box {
+
+    width: 500px;
+
+    margin: 100px auto;
+
+    padding: 40px;
+
+    background-color: white;
+
+    text-align: center;
+
+    border-radius: 10px;
+
+}
+
+
+.login-box i {
+
+    font-size: 50px;
+
+}
+
+
+.login-box h2 {
+
+    font-size: 24px;
+
+    margin: 20px 0;
+
+}
+
+
+.login-box p {
+
+    color: #555;
+
+}
+
+
+.facebook-btn {
+
+    display: block;
+
+    background-color: #1877f2;
+
+    color: white;
+
+    padding: 12px;
+
+    margin: 25px 0;
+
+    text-decoration: none;
+
+    border-radius: 5px;
+
+}
+
+
+.bilgi {
+
+    font-size: 12px;
+
+}
+
+
+/* E-posta ve şifre */
+
+.form-control {
+
+    padding: 12px;
+
+}
+
+
+/* Oturumu sürdür */
+
+.form-check {
+
+    display: flex;
+
+    align-items: center;
+
+    gap: 8px;
+
+    text-align: left;
+
+    margin-bottom: 15px;
+
+}
+
+
+.form-check-input {
+
+    width: 18px;
+
+    height: 18px;
+
+}
+
+
+.form-check-label {
+
+    font-size: 14px;
+
+    color: #555;
+
+}
+
+
+/* Uyarı */
+
+#uyari {
+
+    color: red;
+
+    font-size: 14px;
+
+}
+
+
+/* Oturum aç */
+
+button {
+
+    width: 100%;
+
+    padding: 12px;
+
+    background-color: black;
+
+    color: white;
+
+    border: none;
+
+    border-radius: 5px;
+
+}
+
+
+/* Parolayı unuttun */
+
+.parola {
+
+    display: block;
+
+    margin-top: 20px;
+
+    color: black;
+
+}
