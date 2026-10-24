@@ -102,9 +102,9 @@ The project follows a client-server architecture:
 
 ```text
 Browser (HTML / CSS / JavaScript)
-              â†“
+              Ôåô
        Node.js + Express
-              â†“
+              Ôåô
           PostgreSQL
 ```
 
@@ -122,26 +122,26 @@ This architecture improves:
 
 ```text
 Bilgisayar-Bilgileri/
-â”‚
-â”œâ”€â”€ OKUL/
-â”‚   â”œâ”€â”€ anasayfa.html
-â”‚   â”œâ”€â”€ hakkimizda.html
-â”‚   â”œâ”€â”€ Ã¼rÃ¼nler.html
-â”‚   â”œâ”€â”€ markalar.html
-â”‚   â”œâ”€â”€ iletiÅŸim.html
-â”‚   â”œâ”€â”€ sepet.html
-â”‚   â”œâ”€â”€ satinalma.html
-â”‚   â”œâ”€â”€ hesap.html
-â”‚   â”œâ”€â”€ admin.html
-â”‚   â”œâ”€â”€ siparis-takip.html
-â”‚   â””â”€â”€ CSS, JavaScript and image files
-â”‚
-â”œâ”€â”€ server.js
-â”œâ”€â”€ package.json
-â”œâ”€â”€ package-lock.json
-â”œâ”€â”€ .gitignore
-â”œâ”€â”€ STOK_KURULUM.txt
-â””â”€â”€ README.md
+Ôöé
+Ôö£ÔöÇÔöÇ OKUL/
+Ôöé   Ôö£ÔöÇÔöÇ anasayfa.html
+Ôöé   Ôö£ÔöÇÔöÇ hakkimizda.html
+Ôöé   Ôö£ÔöÇÔöÇ ├╝r├╝nler.html
+Ôöé   Ôö£ÔöÇÔöÇ markalar.html
+Ôöé   Ôö£ÔöÇÔöÇ ileti┼şim.html
+Ôöé   Ôö£ÔöÇÔöÇ sepet.html
+Ôöé   Ôö£ÔöÇÔöÇ satinalma.html
+Ôöé   Ôö£ÔöÇÔöÇ hesap.html
+Ôöé   Ôö£ÔöÇÔöÇ admin.html
+Ôöé   Ôö£ÔöÇÔöÇ siparis-takip.html
+Ôöé   ÔööÔöÇÔöÇ CSS, JavaScript and image files
+Ôöé
+Ôö£ÔöÇÔöÇ server.js
+Ôö£ÔöÇÔöÇ package.json
+Ôö£ÔöÇÔöÇ package-lock.json
+Ôö£ÔöÇÔöÇ .gitignore
+Ôö£ÔöÇÔöÇ STOK_KURULUM.txt
+ÔööÔöÇÔöÇ README.md
 ```
 
 ---
@@ -154,35 +154,35 @@ Bilgisayar-Bilgileri/
 
 ## About Page
 
-![About Page](DOCUMENTS/02-hakkimizda.png)
+![About Page](DOCUMENTS/02-hakkimizda%20(1).png)
 
 ## Products Page
 
-![Products Page and Add-to-Cart Notification](DOCUMENTS/03-urunler-sepete-ekleme.png)
+![Products Page and Add-to-Cart Notification](DOCUMENTS/03-urunler-sepete-ekleme%20(1).png)
 
 ## Brands Page
 
-![Brands Page](DOCUMENTS/04-markalar.png)
+![Brands Page](DOCUMENTS/04-markalar%20(1).png)
 
 ## Contact Page
 
-![Contact Page](DOCUMENTS/05-iletisim.png)
+![Contact Page](DOCUMENTS/05-iletisim%20(1).png)
 
 ## Shopping Cart
 
-![Shopping Cart](DOCUMENTS/06-sepet.png)
+![Shopping Cart](DOCUMENTS/06-sepet%20(1).png)
 
 ## User Account Page
 
-![User Account Login Page](DOCUMENTS/07-hesap-giris.png)
+![User Account Login Page](DOCUMENTS/07-hesap-giris%20(1).png)
 
-## Admin Panel â€” Product Management
+## Admin Panel ÔÇö Product Management
 
-![Admin Product Management](DOCUMENTS/08-admin-urunler.png)
+![Admin Product Management](DOCUMENTS/08-admin-urunler%20(1).png)
 
-## Admin Panel â€” Order Management
+## Admin Panel ÔÇö Order Management
 
-![Admin Order Management](DOCUMENTS/09-admin-siparisler.png)
+![Admin Order Management](DOCUMENTS/09-admin-siparisler%20(1).png)
 
 ---
 
@@ -270,4 +270,3 @@ Web Development | Node.js | Express | PostgreSQL
 # License
 
 If the repository does not include a `LICENSE` file, no open-source license has been specified. Add an appropriate license if you intend to define reuse and redistribution permissions.
-
