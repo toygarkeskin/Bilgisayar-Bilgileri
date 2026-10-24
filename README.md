@@ -154,35 +154,35 @@ Bilgisayar-Bilgileri/
 
 ## About Page
 
-![About Page](DOCUMENTS/02-hakkimizda%20(1).png)
+![About Page](DOCUMENTS/02-hakkimizda.png)
 
 ## Products Page
 
-![Products Page and Add-to-Cart Notification](DOCUMENTS/03-urunler-sepete-ekleme%20(1).png)
+![Products Page and Add-to-Cart Notification](DOCUMENTS/03-urunler-sepete-ekleme.png)
 
 ## Brands Page
 
-![Brands Page](DOCUMENTS/04-markalar%20(1).png)
+![Brands Page](DOCUMENTS/04-markalar.png)
 
 ## Contact Page
 
-![Contact Page](DOCUMENTS/05-iletisim%20(1).png)
+![Contact Page](DOCUMENTS/05-iletisim.png)
 
 ## Shopping Cart
 
-![Shopping Cart](DOCUMENTS/06-sepet%20(1).png)
+![Shopping Cart](DOCUMENTS/06-sepet.png)
 
 ## User Account Page
 
-![User Account Login Page](DOCUMENTS/07-hesap-giris%20(1).png)
+![User Account Login Page](DOCUMENTS/07-hesap-giris.png)
 
 ## Admin Panel ÔÇö Product Management
 
-![Admin Product Management](DOCUMENTS/08-admin-urunler%20(1).png)
+![Admin Product Management](DOCUMENTS/08-admin-urunler.png)
 
 ## Admin Panel ÔÇö Order Management
 
-![Admin Order Management](DOCUMENTS/09-admin-siparisler%20(1).png)
+![Admin Order Management](DOCUMENTS/09-admin-siparisler.png)
 
 ---
 
@@ -270,3 +270,4 @@ Web Development | Node.js | Express | PostgreSQL
 # License
 
 If the repository does not include a `LICENSE` file, no open-source license has been specified. Add an appropriate license if you intend to define reuse and redistribution permissions.
+
