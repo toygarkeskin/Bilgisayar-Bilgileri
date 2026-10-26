@@ -88,6 +88,61 @@ function verifySession(token) {
   }
 }
 
+
+
+function createCustomerSession(customerId) {
+  const payload = Buffer.from(
+    JSON.stringify({
+      customerId: String(customerId),
+      expiresAt: Date.now() + 8 * 60 * 60 * 1000
+    })
+  ).toString("base64url");
+
+  const signature = crypto
+    .createHmac("sha256", SESSION_SECRET)
+    .update(payload)
+    .digest("base64url");
+
+  return `${payload}.${signature}`;
+}
+
+function verifyCustomerSession(token) {
+  if (!token || !SESSION_SECRET || SESSION_SECRET.length < 32) {
+    return null;
+  }
+
+  const parts = token.split(".");
+  if (parts.length !== 2) return null;
+
+  const expected = crypto
+    .createHmac("sha256", SESSION_SECRET)
+    .update(parts[0])
+    .digest("base64url");
+
+  if (!safeStringEqual(parts[1], expected)) return null;
+
+  try {
+    const payload = JSON.parse(
+      Buffer.from(parts[0], "base64url").toString("utf8")
+    );
+
+    if (
+      !payload.customerId ||
+      !/^\d+$/.test(payload.customerId) ||
+      !payload.expiresAt ||
+      payload.expiresAt < Date.now()
+    ) {
+      return null;
+    }
+
+    return payload;
+  } catch {
+    return null;
+  }
+}
+
+
+
 function parseCookies(req) {
   const result = {};
   const header = req.headers.cookie || "";
@@ -499,6 +554,313 @@ app.get("/api/admin/session", (req, res) => {
     username: session?.username || null
   });
 });
+
+
+// MÜŞTERİ ŞİFRE GÜVENLİĞİ
+function hashCustomerPassword(password) {
+  return new Promise((resolve, reject) => {
+    const salt = crypto.randomBytes(16).toString("hex");
+
+    crypto.scrypt(password, salt, 64, (err, key) => {
+      if (err) return reject(err);
+      resolve(`${salt}:${key.toString("hex")}`);
+    });
+  });
+}
+
+function verifyCustomerPassword(password, storedHash) {
+  return new Promise((resolve, reject) => {
+    const [salt, keyHex] = String(storedHash).split(":");
+
+    if (!salt || !keyHex || !/^[a-f0-9]+$/i.test(keyHex)) {
+      return resolve(false);
+    }
+
+    const expected = Buffer.from(keyHex, "hex");
+
+    crypto.scrypt(password, salt, expected.length, (err, key) => {
+      if (err) return reject(err);
+
+      resolve(
+        expected.length === key.length &&
+        crypto.timingSafeEqual(expected, key)
+      );
+    });
+  });
+}
+
+
+// MÜŞTERİ KAYIT
+app.post("/api/customers/register", async (req, res) => {
+  try {
+    const { name, email, password } = req.body || {};
+
+    if (
+      typeof name !== "string" ||
+      typeof email !== "string" ||
+      typeof password !== "string"
+    ) {
+      return res.status(400).json({
+        success: false,
+        message: "Tüm alanları doldur."
+      });
+    }
+
+    const cleanName = name.trim();
+    const cleanEmail = email.trim().toLowerCase();
+
+    if (cleanName.length < 2 || cleanName.length > 150) {
+      return res.status(400).json({
+        success: false,
+        message: "Ad en az 2 karakter olmalı."
+      });
+    }
+
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(cleanEmail)) {
+      return res.status(400).json({
+        success: false,
+        message: "Geçerli bir e-posta gir."
+      });
+    }
+
+    if (password.length < 8 || password.length > 128) {
+      return res.status(400).json({
+        success: false,
+        message: "Şifre 8-128 karakter arasında olmalı."
+      });
+    }
+
+    const passwordHash = await hashCustomerPassword(password);
+
+    const result = await pool.query(
+      `INSERT INTO customers (name, email, password_hash)
+       VALUES ($1, $2, $3)
+       ON CONFLICT (email) DO NOTHING
+       RETURNING id, name, email`,
+      [cleanName, cleanEmail, passwordHash]
+    );
+
+    if (result.rowCount === 0) {
+      return res.status(409).json({
+        success: false,
+        message: "Bu e-posta zaten kayıtlı."
+      });
+    }
+
+    return res.status(201).json({
+      success: true,
+      message: "Kayıt başarılı. Şimdi giriş yapabilirsin."
+    });
+  } catch (error) {
+    console.error("Müşteri kayıt hatası:", error.message);
+    return res.status(500).json({
+      success: false,
+      message: "Kayıt sırasında hata oluştu."
+    });
+  }
+});
+
+// MÜŞTERİ GİRİŞ
+app.post("/api/customers/login", async (req, res) => {
+  try {
+    const { email, password } = req.body || {};
+
+    if (
+      typeof email !== "string" ||
+      typeof password !== "string" ||
+      email.length > 254 ||
+      password.length > 128
+    ) {
+      return res.status(400).json({
+        success: false,
+        message: "E-posta ve şifre gir."
+      });
+    }
+
+    const result = await pool.query(
+      `SELECT id, name, email, password_hash
+       FROM customers
+       WHERE email = $1`,
+      [email.trim().toLowerCase()]
+    );
+
+    const customer = result.rows[0];
+
+    if (
+      !customer ||
+      !(await verifyCustomerPassword(password, customer.password_hash))
+    ) {
+      return res.status(401).json({
+        success: false,
+        message: "E-posta veya şifre hatalı."
+      });
+    }
+
+    if (!SESSION_SECRET || SESSION_SECRET.length < 32) {
+      return res.status(503).json({
+        success: false,
+        message: "Oturum ayarları sunucuda eksik."
+      });
+    }
+
+    const token = createCustomerSession(customer.id);
+
+    res.setHeader(
+      "Set-Cookie",
+      `customer_session=${encodeURIComponent(token)}; HttpOnly; SameSite=Strict; Path=/; Max-Age=28800${IS_PRODUCTION ? "; Secure" : ""}`
+    );
+
+    return res.json({
+      success: true,
+      message: "Giriş başarılı.",
+      customer: {
+        id: customer.id,
+        name: customer.name,
+        email: customer.email
+      }
+    });
+  } catch (error) {
+    console.error("Müşteri giriş hatası:", error.message);
+
+    return res.status(500).json({
+      success: false,
+      message: "Giriş sırasında hata oluştu."
+    });
+  }
+});
+
+
+// KAYITLI ADRESİ GETİR
+app.get("/api/customers/address", async (req, res) => {
+    const session = verifyCustomerSession(
+        parseCookies(req).customer_session
+    );
+
+    if (!session) {
+        return res.status(401).json({ message: "Önce giriş yapmalısın." });
+    }
+
+    try {
+        const result = await pool.query(
+            `SELECT full_name AS "fullName", phone, address
+             FROM customer_addresses
+             WHERE customer_id = $1`,
+            [session.customerId]
+        );
+
+        res.json({ address: result.rows[0] || null });
+    } catch (error) {
+        console.error("Adres getirme hatası:", error.message);
+        res.status(500).json({ message: "Adres alınamadı." });
+    }
+});
+
+// ADRESİ KAYDET
+app.put("/api/customers/address", async (req, res) => {
+    const session = verifyCustomerSession(
+        parseCookies(req).customer_session
+    );
+
+    if (!session) {
+        return res.status(401).json({ message: "Önce giriş yapmalısın." });
+    }
+
+    const { fullName, phone, address } = req.body || {};
+
+    if (
+        typeof fullName !== "string" || !fullName.trim() ||
+        fullName.trim().length > 150 ||
+        typeof phone !== "string" || !phone.trim() ||
+        phone.trim().length > 30 ||
+        typeof address !== "string" || !address.trim() ||
+        address.trim().length > 1000
+    ) {
+        return res.status(400).json({
+            message: "Lütfen ad, telefon ve adres alanlarını doldur."
+        });
+    }
+
+    try {
+        await pool.query(
+            `INSERT INTO customer_addresses
+                (customer_id, full_name, phone, address)
+             VALUES ($1, $2, $3, $4)
+             ON CONFLICT (customer_id)
+             DO UPDATE SET
+                full_name = EXCLUDED.full_name,
+                phone = EXCLUDED.phone,
+                address = EXCLUDED.address,
+                updated_at = NOW()`,
+            [
+                session.customerId,
+                fullName.trim(),
+                phone.trim(),
+                address.trim()
+            ]
+        );
+
+        res.json({ success: true, message: "Adres kaydedildi." });
+    } catch (error) {
+        console.error("Adres kaydetme hatası:", error.message);
+        res.status(500).json({ message: "Adres kaydedilemedi." });
+    }
+});
+
+// MÜŞTERİ OTURUMUNU KONTROL ET
+app.get("/api/customers/session", async (req, res) => {
+  const session = verifyCustomerSession(
+    parseCookies(req).customer_session
+  );
+
+  if (!session) {
+    return res.json({
+      success: true,
+      authenticated: false,
+      customer: null
+    });
+  }
+
+  try {
+    const result = await pool.query(
+      "SELECT id, name, email FROM customers WHERE id = $1",
+      [session.customerId]
+    );
+
+    if (!result.rowCount) {
+      return res.json({
+        success: true,
+        authenticated: false,
+        customer: null
+      });
+    }
+
+    return res.json({
+      success: true,
+      authenticated: true,
+      customer: result.rows[0]
+    });
+  } catch (error) {
+    console.error("Müşteri oturumu kontrol hatası:", error.message);
+    return res.status(500).json({
+      success: false,
+      authenticated: false
+    });
+  }
+});
+
+// MÜŞTERİ ÇIKIŞ
+app.post("/api/customers/logout", (req, res) => {
+  res.setHeader(
+    "Set-Cookie",
+    `customer_session=; HttpOnly; SameSite=Strict; Path=/; Max-Age=0${IS_PRODUCTION ? "; Secure" : ""}`
+  );
+
+  return res.json({
+    success: true,
+    message: "Çıkış yapıldı."
+  });
+});
+
 
 app.post("/api/admin/login", (req, res) => {
   if (
@@ -937,6 +1299,26 @@ async function initializeDatabase() {
       created_at TIMESTAMPTZ DEFAULT NOW()
     )
   `);
+
+    await pool.query(`
+    CREATE TABLE IF NOT EXISTS customers (
+      id BIGSERIAL PRIMARY KEY,
+      name VARCHAR(150) NOT NULL,
+      email VARCHAR(254) NOT NULL UNIQUE,
+      password_hash TEXT NOT NULL,
+      created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+    )
+  `);
+
+  await pool.query(`
+    CREATE TABLE IF NOT EXISTS customer_addresses (
+        customer_id BIGINT PRIMARY KEY REFERENCES customers(id) ON DELETE CASCADE,
+        full_name VARCHAR(150) NOT NULL,
+        phone VARCHAR(30) NOT NULL,
+        address VARCHAR(1000) NOT NULL,
+        updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+    )
+`);
 
   await pool.query(`
     CREATE TABLE IF NOT EXISTS orders (

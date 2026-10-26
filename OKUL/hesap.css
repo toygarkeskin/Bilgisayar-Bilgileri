@@ -1,166 +1,134 @@
 body {
-
     margin: 0;
-
     background-image: url("anasyafresim/bg.png");
-
     background-size: cover;
-
     background-position: center;
-
-    font-family: Arial;
-
+    background-attachment: fixed;
+    font-family: Arial, sans-serif;
+    min-height: 100vh;
 }
 
+.backdrop {
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.25);
+    z-index: -1;
+}
 
 .login-box {
-
     width: 500px;
-
-    margin: 100px auto;
-
+    max-width: calc(100% - 30px);
+    margin: 60px auto;
     padding: 40px;
-
+    box-sizing: border-box;
     background-color: white;
-
     text-align: center;
-
     border-radius: 10px;
-
+    box-shadow: 0 5px 25px rgba(0, 0, 0, 0.15);
 }
 
-
-.login-box i {
-
+.login-box .icon i {
     font-size: 50px;
-
+    color: #212529;
 }
-
 
 .login-box h2 {
-
     font-size: 24px;
-
     margin: 20px 0;
-
 }
-
 
 .login-box p {
-
     color: #555;
-
+    line-height: 1.6;
 }
-
-
-.facebook-btn {
-
-    display: block;
-
-    background-color: #1877f2;
-
-    color: white;
-
-    padding: 12px;
-
-    margin: 25px 0;
-
-    text-decoration: none;
-
-    border-radius: 5px;
-
-}
-
-
-.bilgi {
-
-    font-size: 12px;
-
-}
-
-
-/* E-posta ve şifre */
 
 .form-control {
-
     padding: 12px;
-
 }
-
-
-/* Oturumu sürdür */
 
 .form-check {
-
     display: flex;
-
     align-items: center;
-
     gap: 8px;
-
     text-align: left;
-
     margin-bottom: 15px;
-
 }
-
 
 .form-check-input {
-
     width: 18px;
-
     height: 18px;
-
+    flex-shrink: 0;
 }
-
 
 .form-check-label {
-
     font-size: 14px;
-
     color: #555;
-
 }
 
+.login-box .d-flex button {
+    width: 50%;
+    padding: 10px;
+    border-radius: 5px;
+    font-size: 14px;
+}
 
-/* Uyarı */
+#gonderButonu {
+    width: 100%;
+    padding: 12px;
+    background-color: black;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    transition: background-color 0.2s;
+}
+
+#gonderButonu:hover {
+    background-color: #333;
+}
+
+#gonderButonu:disabled {
+    opacity: 0.6;
+    cursor: wait;
+}
 
 #uyari {
-
-    color: red;
-
+    color: #d00000;
     font-size: 14px;
-
+    margin-top: 12px;
+    overflow-wrap: anywhere;
 }
 
-
-/* Oturum aç */
-
-button {
-
-    width: 100%;
-
-    padding: 12px;
-
-    background-color: black;
-
-    color: white;
-
-    border: none;
-
-    border-radius: 5px;
-
+#uyari.basarili {
+    color: #198754;
 }
-
-
-/* Parolayı unuttun */
 
 .parola {
-
     display: block;
-
     margin-top: 20px;
-
     color: black;
+    text-decoration: none;
+    font-size: 14px;
+}
 
+.parola:hover {
+    text-decoration: underline;
+}
+
+[hidden] {
+    display: none !important;
+}
+
+@media (max-width: 576px) {
+    .login-box {
+        margin: 25px auto;
+        padding: 25px 20px;
+    }
+
+    .login-box h2 {
+        font-size: 21px;
+    }
+
+    .login-box p {
+        font-size: 14px;
+    }
 }

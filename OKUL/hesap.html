@@ -27,7 +27,6 @@
         </div>
     </nav>
 
-
     <div class="backdrop"></div>
 
     <div class="login-box">
@@ -36,42 +35,51 @@
             <i class="bi bi-person-circle"></i>
         </div>
 
-        <h2>
+        <h2 id="baslik">
             OTURUM AÇ VEYA<br>
             YENİ HESAP OLUŞTUR
         </h2>
 
         <p>
-            Online veya mağazadan yapacağın tüm alışverişlerde
-            2 para iadesi al, ödüller kazan ve özel avantajlardan yararlan.
+            Hesabına giriş yaparak siparişlerini takip edebilir,
+            hesap bilgilerini görüntüleyebilir ve teslimat adresini
+            yönetebilirsin.
         </p>
 
-        <p>
-            Hemen katıl ve <strong>150,00 TL</strong> tutarındaki
-            ilk ödülünü kazan.
-        </p>
+        <div class="d-flex gap-2 mb-4">
 
-        <a href="https://www.facebook.com/login/?locale=tr_TR"
-           class="facebook-btn">
-            <i class="bi bi-facebook"></i>
-            FACEBOOK İLE DEVAM ET
-        </a>
+            <button type="button" id="girisSekme" class="btn btn-dark w-50">
+                GİRİŞ YAP
+            </button>
 
-        <p class="bilgi">
-            Sosyal medya hesabımla giriş yaparak hesaplarımın
-            Gizlilik Politikasına uygun şekilde bağlanmasını
-            kabul ediyorum.
-        </p>
+            <button type="button" id="kayitSekme" class="btn btn-outline-dark w-50">
+                KAYIT OL
+            </button>
 
+        </div>
 
         <form id="loginForm">
+
+            <div id="adAlani" class="mb-3" hidden>
+                <input
+                    type="text"
+                    id="ad"
+                    class="form-control"
+                    placeholder="Ad soyad"
+                    minlength="2"
+                    maxlength="150"
+                    autocomplete="name">
+            </div>
 
             <div class="mb-3">
                 <input
                     type="email"
                     id="email"
                     class="form-control"
-                    placeholder="E-posta">
+                    placeholder="E-posta"
+                    maxlength="254"
+                    autocomplete="email"
+                    required>
             </div>
 
             <div class="mb-3">
@@ -79,32 +87,33 @@
                     type="password"
                     id="sifre"
                     class="form-control"
-                    placeholder="Şifre">
+                    placeholder="Şifre"
+                    minlength="8"
+                    maxlength="128"
+                    autocomplete="current-password"
+                    required>
             </div>
 
-            <div class="form-check">
+            <div class="form-check mb-3" id="oturumAlani">
 
                 <input
                     class="form-check-input"
                     type="checkbox"
                     id="oturum">
 
-                <label
-                    class="form-check-label"
-                    for="oturum">
+                <label class="form-check-label" for="oturum">
                     Oturumu sürdür
                 </label>
 
             </div>
 
-            <p id="uyari"></p>
+            <p id="uyari" role="status" aria-live="polite"></p>
 
-            <button type="submit">
+            <button type="submit" id="gonderButonu">
                 OTURUM AÇ
             </button>
 
         </form>
-
 
         <a href="parolaunut.html" class="parola">
             PAROLANI MI UNUTTUN?
@@ -112,7 +121,7 @@
 
     </div>
 
-<script src="hesap.js"></script>
-    
+    <script src="hesap.js"></script>
+
 </body>
 </html>
