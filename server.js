@@ -18,7 +18,7 @@ const pool = new Pool({
 });
 
 app.disable("x-powered-by");
-app.use(express.json({ limit: "50kb" }));
+app.use(express.json({ limit: "2mb" }));
 
 const OKUL_DIR = path.join(__dirname, "OKUL");
 app.use(express.static(OKUL_DIR));
@@ -955,42 +955,77 @@ app.get("/api/admin/products", adminAuth, async (req, res) => {
 
 // ÜRÜN EKLE
 
-app.post("/api/admin/products", adminAuth, async (req, res) => {
-  if (!validProduct(req.body)) {
+app.post("/api/admin/products/bulk", adminAuth, async (req, res) => {
+  const { products } = req.body || {};
+
+  if (!Array.isArray(products) || products.length === 0) {
     return res.status(400).json({
       success: false,
-      message: "Ürün bilgilerini ve fiyatını kontrol edin."
+      message: "Eklenecek ürün listesi boş."
     });
   }
 
-  const { name, description, price, image, category } = req.body;
+  if (products.length > 500) {
+    return res.status(400).json({
+      success: false,
+      message: "Bir seferde en fazla 500 ürün eklenebilir."
+    });
+  }
+
+  const client = await pool.connect();
 
   try {
-    const result = await pool.query(
-      `INSERT INTO products (name, description, price, image, category, stock)
-       VALUES ($1, $2, $3, $4, $5, $6)
-       RETURNING id, name, description, price, image, category, stock`,
-      [
-        name.trim(),
-        description.trim(),
-        Number(price).toFixed(2),
-        image.trim(),
-        category.trim(),
-        Number(req.body.stock)
-      ]
-    );
+    await client.query("BEGIN");
 
-    res.status(201).json({
+    for (let i = 0; i < products.length; i++) {
+      const p = products[i];
+
+      const name = typeof p.name === "string" ? p.name.trim() : "";
+      const category = typeof p.category === "string" ? p.category.trim() : "";
+      const description = typeof p.description === "string" ? p.description.trim() : "";
+      const image = typeof p.image === "string" ? p.image.trim() : "";
+      const price = Number(p.price);
+      const stock = p.stock === undefined || p.stock === "" ? 0 : Number(p.stock);
+
+      if (
+        !name || name.length > 250 ||
+        !category || category.length > 100 ||
+        !description ||
+        !image || image.length > 500 ||
+        !Number.isFinite(price) || price < 0 ||
+        !Number.isInteger(stock) || stock < 0 || stock > 1000000
+      ) {
+        await client.query("ROLLBACK");
+        return res.status(400).json({
+          success: false,
+          message: `${i + 2}. satırdaki ürün bilgileri geçersiz.`
+        });
+      }
+
+      await client.query(
+        `INSERT INTO products
+          (name, description, price, image, category, stock)
+         VALUES ($1, $2, $3, $4, $5, $6)`,
+        [name, description, price, image, category, stock]
+      );
+    }
+
+    await client.query("COMMIT");
+
+    return res.json({
       success: true,
-      product: result.rows[0],
-      message: "Ürün eklendi."
+      inserted: products.length
     });
   } catch (error) {
-    console.error("Ürün ekleme hatası:", error.message);
-    res.status(500).json({
+    await client.query("ROLLBACK");
+    console.error("Toplu ürün ekleme hatası:", error);
+
+    return res.status(500).json({
       success: false,
-      message: "Ürün eklenemedi."
+      message: "Ürünler eklenemedi."
     });
+  } finally {
+    client.release();
   }
 });
 

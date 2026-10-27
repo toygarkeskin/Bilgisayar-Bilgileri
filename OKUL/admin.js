@@ -5,18 +5,15 @@ const money = (value) => new Intl.NumberFormat("tr-TR", {
 }).format(Number(value || 0));
 const dateText = (value) =>
   value ? new Date(value).toLocaleString("tr-TR") : "—";
-
 let productsCache = [];
 let allOrders = [];
 let currentPage = 1;
 const PAGE_SIZE = 10;
-
 function setMessage(id, text, type = "") {
   const element = $(id);
   element.textContent = text || "";
   element.className = "message" + (type ? ` ${type}` : "");
 }
-
 async function api(url, options = {}) {
   const response = await fetch(url, {
     credentials: "same-origin",
@@ -26,44 +23,35 @@ async function api(url, options = {}) {
       ...(options.headers || {})
     }
   });
-
   let data;
   try {
     data = await response.json();
   } catch {
     data = {};
   }
-
   if (response.status === 401 && url !== "/api/admin/login") {
     showLogin("Oturum süren dolmuş olabilir. Yeniden giriş yap.");
     throw new Error(data.message || "Yönetici girişi gerekli.");
   }
-
   if (!response.ok || data.success === false) {
     throw new Error(data.message || "İşlem başarısız.");
   }
-
   return data;
 }
-
 function showLogin(message = "") {
   $("loginView").hidden = false;
   $("dashboardView").hidden = true;
   setMessage("loginMessage", message, message ? "error" : "");
 }
-
 function showDashboard() {
   $("loginView").hidden = true;
   $("dashboardView").hidden = false;
 }
-
 $("loginForm").addEventListener("submit", async (event) => {
   event.preventDefault();
   setMessage("loginMessage", "Giriş kontrol ediliyor…");
-
   const button = $("loginForm").querySelector('button[type="submit"]');
   button.disabled = true;
-
   try {
     await api("/api/admin/login", {
       method: "POST",
@@ -72,7 +60,6 @@ $("loginForm").addEventListener("submit", async (event) => {
         password: $("password").value
       })
     });
-
     $("password").value = "";
     showDashboard();
     await loadAll();
@@ -82,43 +69,35 @@ $("loginForm").addEventListener("submit", async (event) => {
     button.disabled = false;
   }
 });
-
 $("logoutBtn").addEventListener("click", async () => {
   try {
     await api("/api/admin/logout", { method: "POST" });
   } catch {}
-
   showLogin("Çıkış yapıldı.");
 });
-
 document.querySelectorAll("[data-tab]").forEach((button) => {
   button.addEventListener("click", () => {
     document.querySelectorAll("[data-tab]").forEach((item) => {
       item.classList.toggle("active", item === button);
     });
-
     $("productsSection").hidden =
       button.dataset.tab !== "productsSection";
     $("ordersSection").hidden =
       button.dataset.tab !== "ordersSection";
   });
 });
-
 async function loadAll() {
   await Promise.all([loadStats(), loadProducts(), loadOrders()]);
 }
-
 async function loadStats() {
   const data = await api("/api/admin/stats");
   const stats = data.stats;
-
   $("statProducts").textContent = stats.product_count;
   $("statOrders").textContent = stats.order_count;
   $("statPending").textContent = stats.pending_count;
   $("statSuccess").textContent = stats.test_success_count;
   $("statFailed").textContent = stats.test_failed_count;
 }
-
 function escapeHtml(value) {
   return String(value ?? "").replace(/[&<>"']/g, (char) => ({
     "&": "&amp;",
@@ -128,19 +107,15 @@ function escapeHtml(value) {
     "'": "&#39;"
   })[char]);
 }
-
 // Ürün yönetimi
 async function loadProducts() {
   const data = await api("/api/admin/products");
   productsCache = data.products;
-
   const target = $("productsTable");
-
   if (!data.products.length) {
     target.innerHTML = '<p class="muted">Henüz ürün yok.</p>';
     return;
   }
-
   target.innerHTML = `
     <table>
       <thead>
@@ -179,24 +154,20 @@ async function loadProducts() {
         `).join("")}
       </tbody>
     </table>`;
-
   target.querySelectorAll("[data-edit]").forEach((button) => {
     button.addEventListener("click", () => {
       editProduct(Number(button.dataset.edit));
     });
   });
-
   target.querySelectorAll("[data-delete]").forEach((button) => {
     button.addEventListener("click", () => {
       deleteProduct(Number(button.dataset.delete));
     });
   });
 }
-
 function editProduct(id) {
   const p = productsCache.find((item) => item.id === id);
   if (!p) return;
-
   $("productId").value = p.id;
   $("productName").value = p.name;
   $("productCategory").value = p.category;
@@ -206,36 +177,29 @@ function editProduct(id) {
   $("productStock").value = Number(p.stock) || 0;
   $("productFormTitle").textContent = "Ürünü düzenle";
   $("productForm").hidden = false;
-
   $("productForm").scrollIntoView({
     behavior: "smooth",
     block: "start"
   });
 }
-
 function resetProductForm() {
   $("productForm").reset();
   $("productId").value = "";
   $("productFormTitle").textContent = "Yeni ürün";
   $("productForm").hidden = true;
 }
-
 $("newProductBtn").addEventListener("click", () => {
   resetProductForm();
   $("productForm").hidden = false;
   $("productFormTitle").textContent = "Yeni ürün";
-
   $("productForm").scrollIntoView({
     behavior: "smooth",
     block: "start"
   });
 });
-
 $("cancelProductBtn").addEventListener("click", resetProductForm);
-
 $("productForm").addEventListener("submit", async (event) => {
   event.preventDefault();
-
   const id = $("productId").value;
   const product = {
     name: $("productName").value.trim(),
@@ -245,7 +209,6 @@ $("productForm").addEventListener("submit", async (event) => {
     description: $("productDescription").value.trim(),
     stock: Number($("productStock").value)
   };
-
   try {
     await api(
       id ? `/api/admin/products/${id}` : "/api/admin/products",
@@ -254,26 +217,22 @@ $("productForm").addEventListener("submit", async (event) => {
         body: JSON.stringify(product)
       }
     );
-
     setMessage(
       "productMessage",
       id ? "Ürün güncellendi." : "Ürün eklendi.",
       "success"
     );
-
     resetProductForm();
     await Promise.all([loadProducts(), loadStats()]);
   } catch (error) {
     setMessage("productMessage", error.message, "error");
   }
 });
-
 async function deleteProduct(id) {
   const p = productsCache.find((item) => item.id === id);
   if (!p || !confirm(`"${p.name}" ürününü silmek istiyor musun?`)) {
     return;
   }
-
   try {
     await api(`/api/admin/products/${id}`, { method: "DELETE" });
     setMessage("productMessage", "Ürün silindi.", "success");
@@ -282,7 +241,6 @@ async function deleteProduct(id) {
     setMessage("productMessage", error.message, "error");
   }
 }
-
 // Sipariş yönetimi
 async function loadOrders() {
   const data = await api("/api/admin/orders");
@@ -290,27 +248,21 @@ async function loadOrders() {
   currentPage = 1;
   renderOrders();
 }
-
 function filteredOrders() {
   const query = $("orderSearch").value
     .trim()
     .toLocaleLowerCase("tr-TR");
-
   const status = $("statusFilter").value;
-
   const from = $("dateFrom").value
     ? new Date(`${$("dateFrom").value}T00:00:00`)
     : null;
-
   const to = $("dateTo").value
     ? new Date(`${$("dateTo").value}T23:59:59.999`)
     : null;
-
   return allOrders.filter((order) => {
     const itemsText = (order.items || [])
       .map((item) => item.name)
       .join(" ");
-
     const haystack = [
       order.id,
       order.customer_name,
@@ -322,54 +274,41 @@ function filteredOrders() {
       order.tracking_number,
       itemsText
     ].join(" ").toLocaleLowerCase("tr-TR");
-
     const date = new Date(order.created_at);
-
     return (!query || haystack.includes(query)) &&
       (!status || order.status === status) &&
       (!from || date >= from) &&
       (!to || date <= to);
   });
 }
-
 function statusClass(status) {
   if (status === "Test başarılı" || status === "Tamamlandı") {
     return "good";
   }
-
   if (status === "Test başarısız" || status === "İptal edildi") {
     return "bad";
   }
-
   if (status === "Ödeme bekleniyor") {
     return "wait";
   }
-
   return "";
 }
-
 function renderOrders() {
   const rows = filteredOrders();
   const pages = Math.max(1, Math.ceil(rows.length / PAGE_SIZE));
-
   currentPage = Math.min(currentPage, pages);
-
   const start = (currentPage - 1) * PAGE_SIZE;
   const visible = rows.slice(start, start + PAGE_SIZE);
-
   $("orderCount").textContent = `${rows.length} sipariş bulundu`;
   $("pageInfo").textContent = `Sayfa ${currentPage} / ${pages}`;
   $("prevPageBtn").disabled = currentPage <= 1;
   $("nextPageBtn").disabled = currentPage >= pages;
-
   const target = $("ordersTable");
-
   if (!visible.length) {
     target.innerHTML =
       '<p class="muted">Bu filtrelerle eşleşen sipariş bulunamadı.</p>';
     return;
   }
-
   const statuses = [
     "Ödeme bekleniyor",
     "Test başarılı",
@@ -380,7 +319,6 @@ function renderOrders() {
     "Tamamlandı",
     "İptal edildi"
   ];
-
   target.innerHTML = `
     <table>
       <thead>
@@ -398,17 +336,14 @@ function renderOrders() {
           const isTest =
             o.status === "Test başarılı" ||
             o.status === "Test başarısız";
-
           const options = statuses.map((s) => `
             <option value="${s}" ${s === o.status ? "selected" : ""}>
               ${s}
             </option>
           `).join("");
-
           const itemSummary = (o.items || [])
             .map((i) => `${escapeHtml(i.name)} × ${i.quantity}`)
             .join("<br>") || "Ürün bilgisi yok";
-
           return `
             <tr>
               <td>
@@ -452,34 +387,28 @@ function renderOrders() {
         }).join("")}
       </tbody>
     </table>`;
-
   target.querySelectorAll("[data-detail]").forEach((button) => {
     button.addEventListener("click", () => {
       showOrderDetails(Number(button.dataset.detail));
     });
   });
-
   target.querySelectorAll("[data-save-status]").forEach((button) => {
     button.addEventListener("click", async () => {
       const id = button.dataset.saveStatus;
       const select = target.querySelector(
         `[data-order-status="${id}"]`
       );
-
       button.disabled = true;
-
       try {
         await api(`/api/admin/orders/${id}/status`, {
           method: "PATCH",
           body: JSON.stringify({ status: select.value })
         });
-
         setMessage(
           "ordersMessage",
           `#${id} siparişinin durumu güncellendi.`,
           "success"
         );
-
         await Promise.all([loadOrders(), loadStats()]);
       } catch (error) {
         setMessage("ordersMessage", error.message, "error");
@@ -489,19 +418,15 @@ function renderOrders() {
     });
   });
 }
-
 // Sipariş detayı ve kargo bilgileri
 function showOrderDetails(id) {
   const o = allOrders.find((order) => Number(order.id) === id);
   if (!o) return;
-
   const trackingUrl = String(o.tracking_url || "").trim();
   const safeTrackingUrl = /^https?:\/\//i.test(trackingUrl)
     ? trackingUrl
     : "";
-
   $("dialogTitle").textContent = `Sipariş #${o.id}`;
-
   $("orderDetails").innerHTML = `
     <div class="detail-grid">
       <div class="detail-card">
@@ -529,7 +454,6 @@ function showOrderDetails(id) {
         <strong>${escapeHtml(o.status)}</strong>
       </div>
     </div>
-
     <table class="detail-items">
       <thead>
         <tr>
@@ -550,19 +474,15 @@ function showOrderDetails(id) {
         `).join("")}
       </tbody>
     </table>
-
     <div class="detail-total">
       <span>Sipariş toplamı</span>
       <span>${money(o.total)}</span>
     </div>
-
     ${o.status.startsWith("Test ")
       ? '<p class="muted">Bu sipariş test ödeme akışından geçmiştir; gerçek ödeme alındığı anlamına gelmez.</p>'
       : ""
     }
-
     <h3 class="shipping-title">Kargo takip bilgileri</h3>
-
     ${safeTrackingUrl
       ? `<p>
           <a class="tracking-link"
@@ -574,7 +494,6 @@ function showOrderDetails(id) {
         </p>`
       : ""
     }
-
     <form id="shippingForm" class="shipping-form">
       <label>
         Kargo firması
@@ -583,7 +502,6 @@ function showOrderDetails(id) {
           value="${escapeHtml(o.shipping_company || "")}"
           placeholder="Örn. Yurtiçi Kargo">
       </label>
-
       <label>
         Takip numarası
         <input id="trackingNumber"
@@ -591,16 +509,14 @@ function showOrderDetails(id) {
           value="${escapeHtml(o.tracking_number || "")}"
           placeholder="Kargo takip numarası">
       </label>
-
       <label class="wide">
         Takip bağlantısı (isteğe bağlı)
         <input id="trackingUrl"
           type="url"
           maxlength="500"
           value="${escapeHtml(o.tracking_url || "")}"
-          placeholder="https://...">
+          placeholder="https\://...">
       </label>
-
       <div class="form-actions wide">
         <button id="saveShippingBtn" type="submit">
           Kargo bilgilerini kaydet
@@ -608,27 +524,22 @@ function showOrderDetails(id) {
         <p id="shippingMessage" class="message" role="status"></p>
       </div>
     </form>`;
-
   $("shippingForm").addEventListener("submit", async (event) => {
     event.preventDefault();
-
     const button = $("saveShippingBtn");
     const company = $("shippingCompany").value.trim();
     const number = $("trackingNumber").value.trim();
     const url = $("trackingUrl").value.trim();
-
     if (url && !/^https?:\/\//i.test(url)) {
       setMessage(
         "shippingMessage",
-        "Takip bağlantısı http:// veya https:// ile başlamalı.",
+        "Takip bağlantısı http\:// veya https\:// ile başlamalı.",
         "error"
       );
       return;
     }
-
     button.disabled = true;
     setMessage("shippingMessage", "Kargo bilgileri kaydediliyor…");
-
     try {
       const result = await api(`/api/admin/orders/${id}/shipping`, {
         method: "PATCH",
@@ -638,11 +549,9 @@ function showOrderDetails(id) {
           tracking_url: url
         })
       });
-
       const index = allOrders.findIndex(
         (order) => Number(order.id) === id
       );
-
       if (index !== -1 && result.order) {
         allOrders[index] = {
           ...allOrders[index],
@@ -653,7 +562,6 @@ function showOrderDetails(id) {
         allOrders[index].tracking_number = number;
         allOrders[index].tracking_url = url;
       }
-
       showOrderDetails(id);
       setMessage(
         "shippingMessage",
@@ -668,22 +576,18 @@ function showOrderDetails(id) {
       if (currentButton) currentButton.disabled = false;
     }
   });
-
   if (!$("orderDialog").open) {
     $("orderDialog").showModal();
   }
 }
-
 $("closeDialogBtn").addEventListener("click", () => {
   $("orderDialog").close();
 });
-
 $("orderDialog").addEventListener("click", (event) => {
   if (event.target === $("orderDialog")) {
     $("orderDialog").close();
   }
 });
-
 ["orderSearch", "statusFilter", "dateFrom", "dateTo"].forEach((id) => {
   $(id).addEventListener(
     id === "orderSearch" ? "input" : "change",
@@ -693,7 +597,6 @@ $("orderDialog").addEventListener("click", (event) => {
     }
   );
 });
-
 $("clearFiltersBtn").addEventListener("click", () => {
   $("orderSearch").value = "";
   $("statusFilter").value = "";
@@ -702,30 +605,25 @@ $("clearFiltersBtn").addEventListener("click", () => {
   currentPage = 1;
   renderOrders();
 });
-
 $("prevPageBtn").addEventListener("click", () => {
   if (currentPage > 1) {
     currentPage--;
     renderOrders();
   }
 });
-
 $("nextPageBtn").addEventListener("click", () => {
   const pages = Math.max(
     1,
     Math.ceil(filteredOrders().length / PAGE_SIZE)
   );
-
   if (currentPage < pages) {
     currentPage++;
     renderOrders();
   }
 });
-
 $("refreshOrdersBtn").addEventListener("click", async () => {
   const button = $("refreshOrdersBtn");
   button.disabled = true;
-
   try {
     await Promise.all([loadOrders(), loadStats()]);
     setMessage("ordersMessage", "Siparişler yenilendi.", "success");
@@ -735,18 +633,14 @@ $("refreshOrdersBtn").addEventListener("click", async () => {
     button.disabled = false;
   }
 });
-
 $("exportOrdersBtn").addEventListener("click", () => {
   const rows = filteredOrders();
-
   if (!rows.length) {
     setMessage("ordersMessage", "Dışa aktarılacak sipariş yok.", "error");
     return;
   }
-
   const csvCell = (value) =>
     `"${String(value ?? "").replace(/"/g, '""')}"`;
-
   const csv = [
     [
       "Sipariş No",
@@ -781,35 +675,108 @@ $("exportOrdersBtn").addEventListener("click", () => {
   ]
     .map((row) => row.map(csvCell).join(";"))
     .join("\r\n");
-
   const blob = new Blob(["\uFEFF", csv], {
     type: "text/csv;charset=utf-8;"
   });
-
   const url = URL.createObjectURL(blob);
   const link = document.createElement("a");
-
   link.href = url;
   link.download =
     `siparisler-${new Date().toISOString().slice(0, 10)}.csv`;
-
   document.body.appendChild(link);
   link.click();
   link.remove();
   URL.revokeObjectURL(url);
-
   setMessage(
     "ordersMessage",
     `${rows.length} sipariş CSV olarak dışa aktarıldı.`,
     "success"
   );
 });
-
+// Ürün CSV içe aktarma (en fazla 500 ürün)
+function parseProductCsv(text) {
+  const firstLine = (text.replace(/^\uFEFF/, '').split(/\r?\n/, 1)[0] || '');
+  const delimiter = (firstLine.match(/;/g) || []).length > (firstLine.match(/,/g) || []).length ? ';' : ',';
+  const rows = [];
+  let row = [], cell = '', quoted = false;
+  const input = text.replace(/^\uFEFF/, '');
+  for (let i = 0; i < input.length; i++) {
+    const ch = input[i];
+    if (ch === '"') {
+      if (quoted && input[i + 1] === '"') { cell += '"'; i++; }
+      else quoted = !quoted;
+    } else if (ch === delimiter && !quoted) {
+      row.push(cell.trim()); cell = '';
+    } else if ((ch === '\n' || ch === '\r') && !quoted) {
+      if (ch === '\r' && input[i + 1] === '\n') i++;
+      row.push(cell.trim());
+      if (row.some((value) => value !== '')) rows.push(row);
+      row = []; cell = '';
+    } else cell += ch;
+  }
+  row.push(cell.trim());
+  if (row.some((value) => value !== '')) rows.push(row);
+  if (rows.length < 2) throw new Error('CSV dosyasında başlık ve en az bir ürün bulunmalı.');
+  const normalize = (value) => String(value || '').trim().toLocaleLowerCase('tr-TR')
+    .normalize('NFD').replace(/[\u0300-\u036f]/g, '');
+  const headers = rows.shift().map(normalize);
+  const aliases = {
+    name: ['name', 'urun', 'urun adi', 'urunadi', 'product', 'product name'],
+    category: ['category', 'kategori'],
+    price: ['price', 'fiyat'],
+    stock: ['stock', 'stok', 'adet', 'quantity'],
+    image: ['image', 'resim', 'gorsel', 'image url'],
+    description: ['description', 'aciklama', 'urun aciklamasi']
+  };
+  const indexes = {};
+  for (const [key, names] of Object.entries(aliases)) indexes[key] = headers.findIndex((header) => names.includes(header));
+  if (indexes.name < 0 || indexes.price < 0) throw new Error('CSV başlıklarında en az name/urun ve price/fiyat sütunları olmalı.');
+  const products = rows.map((values, index) => {
+    const get = (key) => indexes[key] < 0 ? '' : (values[indexes[key]] || '').trim();
+    const priceText = get('price').trim();
+    const price = Number(priceText.includes(',') ? priceText.replace(/\./g, '').replace(',', '.') : priceText);
+    const stockRaw = get('stock');
+    const stock = stockRaw === '' ? 0 : Number(stockRaw.replace(',', '.'));
+    if (!get('name')) throw new Error(`${index + 2}. satırda ürün adı boş.`);
+    if (!Number.isFinite(price) || price < 0) throw new Error(`${index + 2}. satırda fiyat geçersiz.`);
+    if (!Number.isInteger(stock) || stock < 0) throw new Error(`${index + 2}. satırda stok tam sayı ve 0 veya daha büyük olmalı.`);
+    return { name: get('name'), category: get('category'), price, stock, image: get('image'), description: get('description') };
+  });
+  if (products.length > 500) throw new Error('Tek seferde en fazla 500 ürün içe aktarabilirsin.');
+  return products;
+}
+const csvFileInput = $('productCsvFile');
+const importProductsButton = $('importProductsBtn');
+const downloadProductCsvButton = $('downloadProductCsvBtn');
+if (downloadProductCsvButton) downloadProductCsvButton.addEventListener('click', () => {
+  const template = 'name,category,price,stock,image,description\nÖrnek Ürün,Elektronik,199.90,10,https://example.com/resim.jpg,Ürün açıklaması\n';
+  const blob = new Blob(['\uFEFF', template], { type: 'text/csv;charset=utf-8;' });
+  const url = URL.createObjectURL(blob);
+  const link = document.createElement('a');
+  link.href = url; link.download = 'urun-sablonu.csv'; link.click();
+  URL.revokeObjectURL(url);
+});
+if (importProductsButton && csvFileInput) importProductsButton.addEventListener('click', async () => {
+  const file = csvFileInput.files && csvFileInput.files[0];
+  if (!file) { setMessage('bulkImportMessage', 'Önce bir CSV dosyası seç.', 'error'); return; }
+  importProductsButton.disabled = true;
+  setMessage('bulkImportMessage', 'CSV kontrol ediliyor…');
+  try {
+    const products = parseProductCsv(await file.text());
+    const result = await api('/api/admin/products/bulk', {
+      method: 'POST', body: JSON.stringify({ products })
+    });
+    setMessage('bulkImportMessage', result.message || `${products.length} ürün içe aktarıldı.`, 'success');
+    csvFileInput.value = '';
+    await Promise.all([loadProducts(), loadStats()]);
+  } catch (error) {
+    setMessage('bulkImportMessage', error.message || 'CSV içe aktarılamadı.', 'error');
+  } finally { importProductsButton.disabled = false; }
+});
 // Sayfa başlangıcı
 (async function boot() {
   try {
     const data = await api("/api/admin/session");
-
     if (data.authenticated) {
       showDashboard();
       await loadAll();
