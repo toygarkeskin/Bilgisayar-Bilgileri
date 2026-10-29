@@ -44,10 +44,13 @@
         <article class="stat"><span>Test başarısız</span><strong id="statFailed">—</strong></article>
       </section>
 
+
       <nav class="tabs" aria-label="Yönetim bölümleri">
         <button class="tab" data-tab="productsSection" type="button">Ürünler</button>
-        <button class="tab active" data-tab="ordersSection" type="button">Siparişler</button>
+         <button class="tab active" data-tab="ordersSection" type="button">Siparişler</button>
+          <button class="tab" data-tab="supportSection" type="button">Destek Talepleri</button>
       </nav>
+
 
       <section id="productsSection" class="panel" hidden>
         <div class="section-heading">
@@ -174,6 +177,26 @@
         </div>
       </section>
 
+
+<section id="supportSection" class="panel" hidden>
+  <div class="section-heading">
+    <div>
+      <h2>Destek talepleri</h2>
+      <p class="muted">İletişim formundan gelen talepleri yönet.</p>
+    </div>
+    <div class="toolbar-actions">
+      <span id="supportCount" class="muted">Talepler yükleniyor…</span>
+      <button id="refreshSupportBtn" class="secondary" type="button">↻ Yenile</button>
+    </div>
+  </div>
+
+  <p id="supportMessage" class="message" role="status"></p>
+  <div id="supportTable" class="table-wrap">
+    <p class="muted">Talepler yükleniyor…</p>
+  </div>
+</section>
+
+
       <p id="globalMessage" class="message" role="status"></p>
     </section>
   </main>
@@ -188,5 +211,19 @@
     </div>
     <div id="orderDetails"></div>
   </dialog>
+
+
+<dialog id="supportDialog" class="order-dialog">
+  <div class="dialog-heading">
+    <div>
+      <div class="brand-mark">DESTEK TALEBİ</div>
+      <h2>Talep detayı</h2>
+    </div>
+    <button id="closeSupportDialogBtn" class="secondary" type="button">Kapat</button>
+  </div>
+  <div id="supportDetail"></div>
+</dialog>
+
+
 </body>
 </html>

@@ -4,3 +4,10 @@ node_modules/
 !.env.example
 npm-debug.log*
 .DS_Store
+
+yedek-*/
+server.js.backup
+server.js.email-backup
+server.js.sorun-yedegi
+
+OKUL/admin.js.yedek-sekmeler
